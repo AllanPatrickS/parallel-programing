@@ -7,8 +7,8 @@
 #define SIZE 100
 int A[SIZE][SIZE], B[SIZE][SIZE], C[SIZE][SIZE];
 /**
- * mpicc matriz_multiplas_linhas.c -o matriz -fopenmp
- * mpirun -np 4 matriz
+ * mpicc matriz_hibrida.c -o matriz -fopenmp
+ * mpirun -np 2 matriz
  */
 
 int main(int argc, char** argv){
@@ -41,6 +41,8 @@ int main(int argc, char** argv){
         limite_superior += SIZE%np;
     }
 
+    #pragma omp parallel shared(A,B,C,limite_inferior,limite_superior) private(i,j,k) num_threads(2)
+	#pragma omp for 
     for(i=limite_inferior; i < limite_superior; i++) {
         for( j = 0; j < N; j++) {
             C[i][j] = 0.0;

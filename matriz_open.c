@@ -1,6 +1,5 @@
 #include <omp.h>
 #include <math.h>
-#include <time.h>
 #include <stdio.h>
 
 /**
@@ -11,10 +10,7 @@
 int A[SIZE][SIZE], B[SIZE][SIZE], C[SIZE][SIZE];
  
 int main(int argc, char *argv[]) {
-    int i, j, k, nthreads;
-    clock_t clock_timer;
-    double wall_timer;
-
+    int i, j, k;
 
 	// Inicializa Matriz com 1
 	for(i = 0 ; i < SIZE; i++){
@@ -26,7 +22,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	double begin = omp_get_wtime();
-	#pragma omp parallel shared(A,B,C) private(i,j,k)
+	#pragma omp parallel shared(A,B,C) private(i,j,k) num_threads(4)
 	#pragma omp for 
 	for(i = 0; i < SIZE; i++){
 		for( j = 0; j < SIZE; j++) {
