@@ -2,20 +2,32 @@
 #include <math.h>
 #include <time.h>
 #include <iostream>
+
+#define SIZE 50
+int A[SIZE][SIZE], B[SIZE][SIZE], C[SIZE][SIZE];
  
 int main(int argc, char *argv[]) {
-    int i, nthreads;
+    int i, j, k,N, nthreads;
     clock_t clock_timer;
     double wall_timer;
-    double c[1000000]; 
-    for (nthreads = 1; nthreads <=8; ++nthreads) {
-        clock_timer = clock();
-        wall_timer = omp_get_wtime();
-        #pragma omp parallel for private(i) num_threads(nthreads)
-        for (i = 0; i < 1000000; i++) 
-          c[i] = sqrt(i * 4 + i * 2 + i); 
-        std::cout << "threads: " << nthreads <<  " time on clock(): " << 
-            (double) (clock() - clock_timer) / CLOCKS_PER_SEC
-           << " time on wall: " <<  omp_get_wtime() - wall_timer << "\n";
-    }
+
+	// Inicializa Matriz com 1
+	for(i = 0 ; i < SIZE; i++){
+		for(j = 0; j < SIZE; j++) {
+			A[i][j] = 1;
+			B[i][j] = 2;
+			C[i][j] = 3;
+		}
+	}
+
+   #pragma omp parallel shared(A,B,C,N) private(i,j,k)
+	#pragma omp for 
+	for(i = 0; i < SIZE; i++){
+		for( j = 0; j < N; j++) {
+			C[i][j] = 0.0;
+			for (k = 0; k < N ; k++) {
+				C[i][j] = C[i][j] + A[i][k] * B[k][j];
+			}
+		}
+	}
 }
