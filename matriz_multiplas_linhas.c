@@ -4,11 +4,11 @@
 #include "mpi.h"
 #include <string.h>
 
-#define SIZE 50
+#define SIZE 10
 int A[SIZE][SIZE], B[SIZE][SIZE], C[SIZE][SIZE];
 /**
- * mpicc matriz.c -o matriz
- * mpirun -np 5 test
+ * mpicc matriz_multiplas_linhas.c -o matriz
+ * mpirun -np 5 matriz
  */
 
 int main(int argc, char** argv){
@@ -49,11 +49,16 @@ int main(int argc, char** argv){
     }
 
     if(meu_rank != master){
-        MPI_Send(C[limite_inferior],SIZE*linhas_por_processo,MPI_INT,master,tag,MPI_COMM_WORLD);
+        for(tag=limite_inferior; tag < limite_superior; tag++) {
+            MPI_Send(C[tag],SIZE,MPI_INT,master,tag,MPI_COMM_WORLD);
+        }
     }else{
-        int index;
-        for(index = 1; index < np; index++) {
-            MPI_Recv(C[i], SIZE*linhas_por_processo, MPI_INT, index, tag, MPI_COMM_WORLD, &status);
+        int index = 0;
+        for(tag = limite_superior; tag < SIZE; tag++) {
+            if(tag%linhas_por_processo == 0 && index < np-1 ) {
+                index++;
+            }
+            MPI_Recv(C[tag], SIZE, MPI_INT, index, tag, MPI_COMM_WORLD, &status);
         }
     }
 
