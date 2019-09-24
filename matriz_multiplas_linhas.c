@@ -4,7 +4,7 @@
 #include "mpi.h"
 #include <string.h>
 
-#define SIZE 10
+#define SIZE 100
 int A[SIZE][SIZE], B[SIZE][SIZE], C[SIZE][SIZE];
 /**
  * mpicc matriz_multiplas_linhas.c -o matriz
@@ -31,6 +31,8 @@ int main(int argc, char** argv){
 			C[i][j] = 1;
 		}
 	}
+
+   	double begin = omp_get_wtime();
     // Calcula limites para cada processo
     int linhas_por_processo = SIZE/np;
     int limite_inferior = linhas_por_processo * meu_rank;
@@ -52,7 +54,7 @@ int main(int argc, char** argv){
         for(tag=limite_inferior; tag < limite_superior; tag++) {
             MPI_Send(C[tag],SIZE,MPI_INT,master,tag,MPI_COMM_WORLD);
         }
-    }else{
+    } else{
         int index = 0;
         for(tag = limite_superior; tag < SIZE; tag++) {
             if(tag%linhas_por_processo == 0 && index < np-1 ) {
@@ -62,17 +64,11 @@ int main(int argc, char** argv){
         }
     }
 
-    // Printa a matriz
-    if(meu_rank == master){
-        printf("-------------- Multiplicacao de matriz --------------\n");
-        for(i = 0; i < SIZE; i++) {
-            for(j = 0; j < SIZE; j++) {
-                printf("%d ", C[i][j]);
-            }
-            printf("\n");
-        }
-     }
-	
     MPI_Finalize();
+    double end = omp_get_wtime();
+	double time_spent = (end - begin);
+    if(meu_rank == master){
+        printf("Tempo total: %f secs\n", time_spent);	
+    }
     return 0;
 }
