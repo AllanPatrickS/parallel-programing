@@ -10,7 +10,7 @@ Tempos:
     Total time: 0.054714 secs
     Total time: 0.047578 secs
     Total time: 0.052560 secs
- - Hibrido
+ - Hibrid
     Total time: 0.052457 secs
     Total time: 0.052566 secs
     Total time: 0.053038 secs
